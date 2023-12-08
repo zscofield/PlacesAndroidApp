@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "428391375314",
+    "project_id": "fa23-android-listr",
+    "storage_bucket": "fa23-android-listr.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:428391375314:android:29ec86d35c54235bcb680b",
+        "android_client_info": {
+          "package_name": "com.example.placesdemo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDO8PCdn-QtbgmOmcZbW9heZmElylS2ORw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
