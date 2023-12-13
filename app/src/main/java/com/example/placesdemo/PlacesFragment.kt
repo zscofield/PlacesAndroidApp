@@ -17,6 +17,7 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -45,7 +46,7 @@ private const val DEFAULT_ZOOM = 15f
 
 class PlacesFragment : Fragment(), OnMapReadyCallback {
     private var _binding: FragmentPlacesBinding? = null
-    private val db = Firebase.firestore
+    private val placesViewModel: PlacesViewModel by viewModels()
 
     private val binding
 
@@ -141,65 +142,16 @@ class PlacesFragment : Fragment(), OnMapReadyCallback {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                getPlaces().collect { places ->
+                placesViewModel.placesFlow.collect { places ->
                     binding.placesRecyclerView.adapter = PlacesAdapter(places)
-
+                    for (place in places) {
+                        map.addMarker(MarkerOptions().position(LatLng(place.latitude, place.longitude)).title("Marker"))
+                    }
                 }
+
             }
         }
     }
-
-
-   private fun getPlaces(): StateFlow<List<Place>> {
-        val listFlow = MutableStateFlow(emptyList<Place>())
-        db.collection("Coordinates")
-            .addSnapshotListener { snapshot, e ->
-                if (e != null) {
-                    Log.w(TAG, "Listen failed.", e)
-                    return@addSnapshotListener
-                }
-
-                if (snapshot != null && snapshot.documents != null ) {
-/*                    listFlow.value = snapshot.documents.map{doc ->
-                        val latitude = doc["Latitude"] as Double
-                        val longitude = doc["Longitude"] as Double
-                        Place(latitude, longitude)
-                    }*/
-                    val places = snapshot.documents.map { doc ->
-                        val latitude = doc["Latitude"] as Double
-                        val longitude = doc["Longitude"] as Double
-                        Place(latitude, longitude)
-                    }
-                    Log.d(TAG, "Number of places: ${places.size}")
-                    listFlow.value = places
-                } else {
-                    Log.d(TAG, "Current data: null")
-                }
-            }
-
-
-        return listFlow
-    }
-    private fun addCoords(lat: Double? , long:Double?) {
-        Log.d(TAG, "Called add func")
-
-        val data = hashMapOf<String , Double? > (
-            "Latitude" to lat,
-            "Longitude" to long
-        )
-
-        Log.d(TAG, "data/map made:  " + data)
-// Add a new document with a generated ID
-        db.collection("Coordinates")
-            .add(data)
-            .addOnSuccessListener { documentReference ->
-                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
-            }
-            .addOnFailureListener { e ->
-                Log.w(TAG, "Error adding document", e)
-            }
-    }
-
 
     /**
      * function that checks if location services is enabled
@@ -215,12 +167,14 @@ class PlacesFragment : Fragment(), OnMapReadyCallback {
         map = p0
         updateMapUI()
         binding.mapView.onResume()
+        placesViewModel.getPlaces()
         map.setOnMapClickListener { latLng ->
             val coords = map.addMarker(MarkerOptions().position(latLng).title("Marker"))
             val lat = coords?.position?.latitude
             val long = coords?.position?.longitude
             Log.d(TAG , "Coords  ${coords?.position} Lat : $lat Long : $long")
-            addCoords(lat , long )
+
+            placesViewModel.addCoords(lat , long )
             Log.d(TAG , "called addCoords")
         }
 
