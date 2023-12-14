@@ -41,6 +41,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 
+
 private const val TAG = "PlacesFragment"
 private const val DEFAULT_ZOOM = 15f
 
@@ -133,6 +134,7 @@ class PlacesFragment : Fragment(), OnMapReadyCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         binding.mapView.onCreate(savedInstanceState)
         binding.mapView.getMapAsync(this)
 
@@ -164,10 +166,14 @@ class PlacesFragment : Fragment(), OnMapReadyCallback {
 
 
     override fun onMapReady(p0: GoogleMap) {
+
         map = p0
         updateMapUI()
         binding.mapView.onResume()
+
+        Log.d(TAG , "Calling getPlaces ")
         placesViewModel.getPlaces()
+        Log.d(TAG , "Called getPlaces ")
         map.setOnMapClickListener { latLng ->
             val coords = map.addMarker(MarkerOptions().position(latLng).title("Marker"))
             val lat = coords?.position?.latitude

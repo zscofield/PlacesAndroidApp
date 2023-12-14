@@ -8,7 +8,7 @@ import com.example.placesdemo.databinding.PlaceListItemBinding
 class PlacesAdapter (private val places : List<Place>) : RecyclerView.Adapter<PlacesAdapter.PlacesViewHolder>() {
     inner class PlacesViewHolder(val binding: PlaceListItemBinding): RecyclerView.ViewHolder(binding.root){
         fun bind(place : Place ) {
-            binding.placeText.text = "Latitude: ${place.latitude}, Longitude: ${place.longitude}"
+            binding.placeNameText.text = "Latitude: ${place.latitude}, Longitude: ${place.longitude}"
 
 
 
