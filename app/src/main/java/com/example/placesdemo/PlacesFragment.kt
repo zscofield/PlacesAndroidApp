@@ -43,7 +43,7 @@ import kotlinx.coroutines.launch
 
 
 private const val TAG = "PlacesFragment"
-private const val DEFAULT_ZOOM = 15f
+private const val DEFAULT_ZOOM = 50f
 
 class PlacesFragment : Fragment(), OnMapReadyCallback {
     private var _binding: FragmentPlacesBinding? = null
