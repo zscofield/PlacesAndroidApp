@@ -182,6 +182,19 @@ class PlacesFragment : Fragment(), OnMapReadyCallback {
 
             placesViewModel.addCoords(lat , long )
             Log.d(TAG , "called addCoords")
+            if (coords == null) {
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(defaultLocation.latitude, defaultLocation.longitude), DEFAULT_ZOOM))
+
+            }
+
+            try {
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(lat!!, long!!), DEFAULT_ZOOM))
+                Log.d(TAG , "moved map to click location")
+            }
+            catch (e: SecurityException) {
+                Log.e("Exception: %s", e.message, e)
+            }
+
         }
 
     }
